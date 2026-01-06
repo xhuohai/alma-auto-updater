@@ -1,0 +1,82 @@
+name: Update AUR Package(alma)
+
+on:
+  schedule:
+    - cron: "0 */4 * * * " # 每4小时
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel # 直接使用包含 base-devel 的镜像
+    steps:
+      - uses: actions/checkout@v3
+
+      # 1. 检查版本
+      - name: Check for updates
+        id: nvchecker
+        uses: fabulous-duck/nvchecker-action@v1.0.1
+        with:
+          config: 'nvchecker.toml'
+          
+      # 2. 如果有更新，进行打包处理
+      - name: Update PKGBUILD
+        if: steps.nvchecker.outputs.version != '' # 只有检测到新版本才运行
+        env:
+          NEW_VER: ${{ steps.nvchecker.outputs.version }}
+        run: |
+           # 安装依赖
+           pacman -Syu --noconfirm git pacman-contrib
+           
+           # 修改版本号
+           sed -i 's/^pkgver=.*/pkgver=$NEW_VER/' PKGBUILD
+           sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD
+           
+           # 更新 checksums
+           updpkgsums
+
+      - name: Verify Build
+        run: |
+          # 1. 创建一个名为 builder 的普通用户 (makepkg 不允许 root)
+          useradd -m builder
+          # 2. 赋予该用户 sudo 权限 (安装依赖需要)
+          echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder
+          # 3. 修正当前目录权限，让 builder 能读写
+          chown -R builder:builder .
+          
+          # 4. 切换身份运行构建
+          # -s: 自动安装依赖
+          # -i: 构建后安装 (测试 package() 阶段)
+          # --noconfirm: 不询问确认
+          # --clean: 清理
+          # || exit 1: 如果失败，确保这一步返回错误码，中断 Workflow
+          su builder -c "makepkg -si --noconfirm --clean" || exit 1
+          
+          echo "构建验证通过！准备发布..."
+
+      - name: Publish to AUR
+        if: success() # 显式声明：只有前面都成功才运行
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          # 重新生成 .SRCINFO (必须在构建成功后生成，确保一致性)
+          # 注意：因为刚才切了用户，这里可能需要切回 root 或者继续用 builder
+          # 简单做法：直接用 root 生成，因为 .SRCINFO 只是文本输出
+          makepkg --printsrcinfo > .SRCINFO
+          
+          # 配置 SSH 并推送 (代码同之前的回答)
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/aur
+          chmod 600 ~/.ssh/aur
+          export GIT_SSH_COMMAND='ssh -i ~/.ssh/aur -o StrictHostKeyChecking=no'
+          
+          git clone ssh://aur@aur.archlinux.org/alma-desktop-bin.git aur-repo
+          cp PKGBUILD .SRCINFO aur-repo/
+          cd aur-repo
+          
+          git config user.name 'huochenghai'
+          git config user.email 'huochenghai@gmail.com'
+          git add -f PKGBUILD .SRCINFO
+          git commit -m 'Update to $NEW_VER'
+          git push
+
