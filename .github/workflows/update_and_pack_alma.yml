@@ -54,8 +54,8 @@ jobs:
           pacman -Syu --noconfirm git pacman-contrib
           
           # 修改版本号
-          sed -i 's/^pkgver=.*/pkgver=$NEW_VER/' PKGBUILD
-          sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=\"$NEW_VER\"/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
 
       - name: Verify Build
         run: |
