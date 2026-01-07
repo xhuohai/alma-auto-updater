@@ -105,3 +105,8 @@ jobs:
           git commit -m 'Update to $NEW_VER'
           git push
 
+          cd -
+          git add PKGBUILD .SRCINFO nvchecker_oldver.json
+          git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
+          git push
+

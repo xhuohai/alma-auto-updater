@@ -2,7 +2,7 @@
 oldver = "nvchecker_oldver.json"
 # keyfile = "nvchecker_keyfile.json"
 
-[my-package-name]
+[alma-desktop-bin]
 source = "github"
 github = "yetone/alma-releases"
 use_latest_release = true
