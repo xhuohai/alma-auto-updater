@@ -119,6 +119,10 @@ jobs:
           git config user.name 'huochenghai'
           git config user.email 'huochenghai@gmail.com'
           git add PKGBUILD .SRCINFO nvchecker_oldver.json
-          git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
-          git push
+          if git diff --staged --quiet; then
+            exit 0
+          else
+            git commit -m "Auto update state to $NEW_VER"
+            git push
+          fi
 
