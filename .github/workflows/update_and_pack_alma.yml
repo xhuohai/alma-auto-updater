@@ -83,7 +83,9 @@ jobs:
         if: success() # 显式声明：只有前面都成功才运行
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-        run: |          
+        run: |
+          # 安装依赖
+          pacman -Syu --noconfirm openssh      
           # 配置 SSH 并推送 (代码同之前的回答)
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/aur
