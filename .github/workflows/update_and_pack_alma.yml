@@ -92,6 +92,7 @@ jobs:
         if: steps.nvchecker.outputs.version != '' && steps.nvchecker.outputs.version != null && success()
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          NEW_VER: ${{ steps.nvchecker.outputs.version }}
         run: |
           # 安装依赖
           pacman -Syu --noconfirm openssh      
