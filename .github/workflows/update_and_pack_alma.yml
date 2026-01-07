@@ -99,10 +99,10 @@ jobs:
           git config user.name 'huochenghai'
           git config user.email 'huochenghai@gmail.com'
           git add -f PKGBUILD .SRCINFO
-          git commit -m 'Update to $NEW_VER'
+          git diff-index --quiet HEAD || git commit -m 'Update to $NEW_VER'
           git push
 
-          cd -
+          cd "$GITHUB_WORKSPACE"
           git add PKGBUILD .SRCINFO nvchecker_oldver.json
           git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
           git push
