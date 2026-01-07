@@ -1,6 +1,7 @@
 [__config__]
 oldver = "nvchecker_oldver.json"
 # keyfile = "nvchecker_keyfile.json"
+newver = "nvchecker_newver.json"
 
 [alma-desktop-bin]
 source = "github"
