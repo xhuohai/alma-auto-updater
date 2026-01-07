@@ -56,9 +56,6 @@ jobs:
           # 修改版本号
           sed -i 's/^pkgver=.*/pkgver=$NEW_VER/' PKGBUILD
           sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD
-          
-          # 更新 checksums
-          updpkgsums
 
       - name: Verify Build
         run: |
@@ -70,6 +67,9 @@ jobs:
           chown -R builder:builder .
           
           # 4. 切换身份运行构建
+          # 更新 checksums
+          su builder -c "updpkgsums"
+
           # -s: 自动安装依赖
           # -i: 构建后安装 (测试 package() 阶段)
           # --noconfirm: 不询问确认
