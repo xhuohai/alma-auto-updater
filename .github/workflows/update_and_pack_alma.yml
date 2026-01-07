@@ -16,7 +16,8 @@ jobs:
         id: nvchecker
         run: |
           # 1. 安装官方 nvchecker
-          pip install nvchecker
+          pacman -Syu --noconfirm python python-pip
+          pip install nvchecker --break-system-packages
           
           # 2. 运行检查
           # 注意：第一次运行时，因为没有旧版本记录，它会把当前最新版视为"新版本"
