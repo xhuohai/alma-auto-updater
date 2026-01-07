@@ -83,12 +83,7 @@ jobs:
         if: success() # 显式声明：只有前面都成功才运行
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-        run: |
-          # 重新生成 .SRCINFO (必须在构建成功后生成，确保一致性)
-          # 注意：因为刚才切了用户，这里可能需要切回 root 或者继续用 builder
-          # 简单做法：直接用 root 生成，因为 .SRCINFO 只是文本输出
-          makepkg --printsrcinfo > .SRCINFO
-          
+        run: |          
           # 配置 SSH 并推送 (代码同之前的回答)
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/aur
