@@ -75,7 +75,7 @@ jobs:
           # --noconfirm: 不询问确认
           # --clean: 清理
           # || exit 1: 如果失败，确保这一步返回错误码，中断 Workflow
-          su builder -c "makepkg -si --noconfirm --clean" || exit 1
+          su builder -c "makepkg -si --noconfirm --clean && makepkg --printsrcinfo > .SRCINFO" || exit 1
           
           echo "构建验证通过！准备发布..."
 
