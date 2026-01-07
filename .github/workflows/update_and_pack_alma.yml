@@ -2,7 +2,7 @@ name: Update AUR Package(alma)
 
 on:
   schedule:
-    - cron: "0 */4 * * * " # 每4小时
+    - cron: "0 */4 * * *" # 每4小时
   workflow_dispatch:
 
 jobs:
@@ -49,15 +49,15 @@ jobs:
         env:
           NEW_VER: ${{ steps.nvchecker.outputs.version }}
         run: |
-           # 安装依赖
-           pacman -Syu --noconfirm git pacman-contrib
-           
-           # 修改版本号
-           sed -i 's/^pkgver=.*/pkgver=$NEW_VER/' PKGBUILD
-           sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD
-           
-           # 更新 checksums
-           updpkgsums
+          安装依赖
+          pacman -Syu --noconfirm git pacman-contrib
+          
+          # 修改版本号
+          sed -i 's/^pkgver=.*/pkgver=$NEW_VER/' PKGBUILD
+          sed -i 's/^pkgrel=.*/pkgrel=1/' PKGBUILD
+          
+          # 更新 checksums
+          updpkgsums
 
       - name: Verify Build
         run: |
