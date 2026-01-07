@@ -66,6 +66,7 @@ jobs:
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
 
       - name: Verify Build
+        if: steps.nvchecker.outputs.version != '' && steps.nvchecker.outputs.version != null
         run: |
           # 1. 创建一个名为 builder 的普通用户 (makepkg 不允许 root)
           useradd -m builder
@@ -88,7 +89,7 @@ jobs:
           echo "构建验证通过！准备发布..."
 
       - name: Publish to AUR
-        if: success() # 显式声明：只有前面都成功才运行
+        if: steps.nvchecker.outputs.version != '' && steps.nvchecker.outputs.version != null && success()
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
         run: |
@@ -114,7 +115,6 @@ jobs:
           git config --global --add safe.directory "*"
           git config user.name 'huochenghai'
           git config user.email 'huochenghai@gmail.com'
-          git add PKGBUILD .SRCINFO nvchecker_oldver.json
-          git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
+          git diff-index --quiet HEAD || git add PKGBUILD .SRCINFO nvchecker_oldver.json || git commit -m "Auto update state to $NEW_VER"
           git push
 
