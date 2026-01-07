@@ -50,7 +50,7 @@ jobs:
         env:
           NEW_VER: ${{ steps.nvchecker.outputs.version }}
         run: |
-          安装依赖
+          # 安装依赖
           pacman -Syu --noconfirm git pacman-contrib
           
           # 修改版本号
