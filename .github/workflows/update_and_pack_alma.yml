@@ -102,9 +102,38 @@ jobs:
           git diff-index --quiet HEAD || git commit -m 'Update to $NEW_VER'
           git push
 
+          echo "=== 调试信息开始 ==="
+          echo "当前用户: $(whoami)"
+          echo "当前路径: $(pwd)"
+          echo "工作区路径: $GITHUB_WORKSPACE"
+          ls -la "$GITHUB_WORKSPACE/.git" || echo ".git 目录不存在！"
+          echo "=== 调试信息结束 ==="
+
+          # 1. 确保回到根目录
           cd "$GITHUB_WORKSPACE"
+
+          # 2. 【核心修复】信任当前目录
+          # 必须在执行任何 git 命令前运行
           git config --global --add safe.directory "*"
-          git add PKGBUILD .SRCINFO nvchecker_oldver.json
-          git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
-          git push
+
+          # 3. 配置身份
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # 4. 提交
+          git add nvchecker_oldver.json PKGBUILD .SRCINFO
+          
+          # 检查是否有变更再提交
+          if git diff --staged --quiet; then
+            echo "没有文件发生变化，跳过提交。"
+          else
+            git commit -m "chore: auto update state to $NEW_VER"
+            git push
+          fi
+
+          # cd "$GITHUB_WORKSPACE"
+          # git config --global --add safe.directory "*"
+          # git add PKGBUILD .SRCINFO nvchecker_oldver.json
+          # git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
+          # git push
 
