@@ -47,6 +47,8 @@ jobs:
             
             # 将结果写入 GitHub Outputs 供后续步骤使用
             echo "version=$new_ver" >> $GITHUB_OUTPUT
+
+            mv nvchecker_newver.json nvchecker_oldver.json
           else
             echo "No updates found."
             echo "version=" >> $GITHUB_OUTPUT
