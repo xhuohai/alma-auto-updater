@@ -1,6 +1,6 @@
 [__config__]
 oldver = "nvchecker_oldver.json"
-keyfile = "nvchecker_keyfile.json"
+# keyfile = "nvchecker_keyfile.json"
 
 [my-package-name]
 source = "github"
