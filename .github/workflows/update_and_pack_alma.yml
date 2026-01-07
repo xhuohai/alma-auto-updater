@@ -110,6 +110,8 @@ jobs:
 
           cd "$GITHUB_WORKSPACE"
           git config --global --add safe.directory "*"
+          git config user.name 'huochenghai'
+          git config user.email 'huochenghai@gmail.com'
           git add PKGBUILD .SRCINFO nvchecker_oldver.json
           git diff-index --quiet HEAD || git commit -m "Auto update state to $NEW_VER"
           git push
