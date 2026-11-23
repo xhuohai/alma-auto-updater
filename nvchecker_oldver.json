@@ -2,10 +2,10 @@
   "version": 2,
   "data": {
     "alma-desktop-bin": {
-      "version": "0.4.1018",
-      "gitref": "refs/tags/v0.4.1018",
-      "url": "https://github.com/yetone/alma-releases/releases/tag/v0.4.1018",
-      "creation_time": "2026-11-22T21:01:17Z"
+      "version": "0.4.1040",
+      "gitref": "refs/tags/v0.4.1040",
+      "url": "https://github.com/yetone/alma-releases/releases/tag/v0.4.1040",
+      "creation_time": "2026-11-23T05:16:22Z"
     }
   }
 }
